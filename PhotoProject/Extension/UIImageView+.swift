@@ -1,8 +1,8 @@
 //
 //  UIImageView+.swift
-//  UIKitStoryboardPractice
+//  PhotoProject
 //
-//  Created by 정인선 on 1/6/25.
+//  Created by 정인선 on 1/19/25.
 //
 
 import UIKit
@@ -11,12 +11,10 @@ import Kingfisher
 extension UIImageView {
     func setKFImage(strURL: String) {
         if let imageURL = URL(string: strURL) {
-            let imageSize = CGSize(width: bounds.width * 2, height: bounds.height * 2)
-            let processor = DownsamplingImageProcessor(size: imageSize)
             kf.indicatorType = .activity
             kf.setImage(with: imageURL,
-                        options: [.processor(processor),
-                                  .transition(.fade(1))])
+                        options: [.transition(.fade(1))])
+            
         }
     }
 }
