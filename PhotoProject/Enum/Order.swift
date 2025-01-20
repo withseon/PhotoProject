@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Order: String, CaseIterable {
+enum Order: String, CaseIterable, Encodable {
     case latest
     case relevant
     
