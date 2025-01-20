@@ -24,7 +24,7 @@ enum NetworkManager {
             headers = HTTPHeaders(headerDict)
         }
         AF.request(url, method: .get, parameters: parameters, headers: headers)
-            .validate(statusCode: 200..<300)
+            .validate(statusCode: [200])
             .responseDecodable(of: T.self) { response in
                 switch response.result {
                 case .success(let value):
