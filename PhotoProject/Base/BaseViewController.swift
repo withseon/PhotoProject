@@ -10,10 +10,12 @@ import UIKit
 class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
         configureNavigation()
         configureCollectionView()
     }
     
+    func configureView() { }
     func configureNavigation() { }
     func configureCollectionView() { }
 }

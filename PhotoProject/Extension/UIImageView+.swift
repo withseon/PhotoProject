@@ -14,7 +14,6 @@ extension UIImageView {
             kf.indicatorType = .activity
             kf.setImage(with: imageURL,
                         options: [.transition(.fade(1))])
-            
         }
     }
 }
