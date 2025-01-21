@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Color: String, CaseIterable, CustomStringConvertible {
+enum Color: String, CaseIterable, Encodable {
     case black
     case white
     case yellow

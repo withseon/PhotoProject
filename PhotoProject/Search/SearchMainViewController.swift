@@ -9,11 +9,21 @@ import UIKit
 
 final class SearchMainViewController: BaseViewController {
     private struct SearchParams: Encodable {
-        let client_id = APIKEY.ACCESS_KEY
-        let per_page = 20
+        let clientID = APIKEY.ACCESS_KEY
+        let perPage = 20
         var page = 1
-        var order_by = Order.relevant
-        var query = ""
+        var orderBy = Order.relevant
+        var searchText = ""
+        var color: Color?
+        
+        enum CodingKeys: String, CodingKey {
+            case clientID = "client_id"
+            case perPage = "per_page"
+            case page
+            case orderBy = "order_by"
+            case searchText = "query"
+            case color
+        }
     }
     private let mainView = SearchMainView()
     private var searchParams = SearchParams()
@@ -69,9 +79,9 @@ extension SearchMainViewController {
     private func sortButtonTapped() {
         mainView.sortButton.isSelected.toggle()
         if mainView.sortButton.isSelected {
-            searchParams.order_by = .latest
+            searchParams.orderBy = .latest
         } else {
-            searchParams.order_by = .relevant
+            searchParams.orderBy = .relevant
         }
         resetFetchState()
         fetchPhotoData()
@@ -80,7 +90,6 @@ extension SearchMainViewController {
     private func resetFetchState() {
         totalPage = 1
         searchParams.page = 1
-        photoData.removeAll()
     }
     
     private func fetchPhotoData() {
@@ -96,8 +105,10 @@ extension SearchMainViewController {
                     return
                 }
                 mainView.photoCollectionView.isHidden = false
+                mainView.colorCollectionView.allowsSelection = true
                 if searchParams.page == 1 {
                     totalPage = success.totalPages
+                    photoData.removeAll()
                     photoData = success.results
                     mainView.photoCollectionView.reloadData()
                     mainView.photoCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
@@ -119,8 +130,8 @@ extension SearchMainViewController: UISearchBarDelegate {
             showAlert(title: "입력 오류", message: "두 글자 이상 검색해주세요.", actionTitle: "확인", withCancel: false)
             return
         }
-        guard searchParams.query != text else { return }
-        searchParams.query = text
+        guard searchParams.searchText != text else { return }
+        searchParams.searchText = text
         resetFetchState()
         fetchPhotoData()
     }
@@ -153,9 +164,20 @@ extension SearchMainViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Color filter
         if collectionView == mainView.colorCollectionView {
-            // TODO: color filter
+            collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+            let selectedColor = Color.allCases[indexPath.item]
+            if searchParams.color == selectedColor {
+                collectionView.deselectItem(at: indexPath, animated: false)
+                searchParams.color = nil
+            } else {
+                searchParams.color = selectedColor
+            }
+            resetFetchState()
+            fetchPhotoData()
         } else {
+            // Photo
             let vc = StatisticMainViewController()
             vc.photo = photoData[indexPath.item]
             navigationController?.pushViewController(vc, animated: true)

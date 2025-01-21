@@ -82,6 +82,7 @@ extension SearchMainView {
             centerLabel.text = "검색 결과가 없어요."
         }
         photoCollectionView.isHidden = true
+        colorCollectionView.allowsSelection = false
     }
 }
 

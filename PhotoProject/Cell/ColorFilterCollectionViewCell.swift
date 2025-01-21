@@ -11,6 +11,11 @@ import SnapKit
 final class ColorFilterCollectionViewCell: BaseCollectionViewCell {
     private let colorView = UIView()
     private let colorLabel = UILabel()
+    override var isSelected: Bool {
+        willSet {
+            setSelected(isSelected: newValue)
+        }
+    }
     
     override func configureHierarchy() {
         contentView.addSubview(colorView)
@@ -32,19 +37,26 @@ final class ColorFilterCollectionViewCell: BaseCollectionViewCell {
     }
     
     override func configureView() {
-        backgroundColor = .secondarySystemFill
+        contentView.backgroundColor = .secondarySystemFill
         clipsToBounds = true
         colorView.clipsToBounds = true
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             layer.cornerRadius = bounds.height / 2
             colorView.layer.cornerRadius = colorView.bounds.height / 2
+            colorView.layer.borderColor = UIColor.secondarySystemFill.cgColor
+            colorView.layer.borderWidth = 0.5
         }
         colorLabel.font = .systemFont(ofSize: 15)
     }
 }
 
 extension ColorFilterCollectionViewCell {
+    private func setSelected(isSelected: Bool) {
+        contentView.backgroundColor = isSelected ? .secondaryLabel : .secondarySystemFill
+        colorLabel.textColor = isSelected ? .systemBackground : .label
+    }
+    
     func configureContent(color: Color) {
         colorView.backgroundColor = UIColor(hexCode: color.colorHex)
         colorLabel.text = color.description
