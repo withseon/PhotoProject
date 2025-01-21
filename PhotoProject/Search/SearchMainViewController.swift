@@ -8,23 +8,6 @@
 import UIKit
 
 final class SearchMainViewController: BaseViewController {
-    private struct SearchParams: Encodable {
-        let clientID = APIKEY.ACCESS_KEY
-        let perPage = 20
-        var page = 1
-        var orderBy = Order.relevant
-        var searchText = ""
-        var color: Color?
-        
-        enum CodingKeys: String, CodingKey {
-            case clientID = "client_id"
-            case perPage = "per_page"
-            case page
-            case orderBy = "order_by"
-            case searchText = "query"
-            case color
-        }
-    }
     private let mainView = SearchMainView()
     private var searchParams = SearchParams()
     private var totalPage = 1
@@ -84,7 +67,7 @@ extension SearchMainViewController {
             searchParams.orderBy = .relevant
         }
         resetFetchState()
-        fetchPhotoData()
+        fetchPhotoData(api: UnsplashRequest.search(params: searchParams))
     }
     
     private func resetFetchState() {
@@ -92,11 +75,12 @@ extension SearchMainViewController {
         searchParams.page = 1
     }
     
-    private func fetchPhotoData() {
-        let url = APIURL.SEARCH_URL
-        let parameters = searchParams.toParameters
-        
-        NetworkManager.networkRequest(url: url, parameters: parameters, type: SearchPhoto.self) { [weak self] result in
+    private func fetchPhotoData(api: UnsplashRequest) {
+        NetworkManager.networkRequest(url: api.endPoint,
+                                      method: api.method,
+                                      parameters: api.parameters,
+                                      headers: api.header,
+                                      type: SearchPhoto.self) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let success):
@@ -121,6 +105,7 @@ extension SearchMainViewController {
             }
         }
     }
+
 }
 
 extension SearchMainViewController: UISearchBarDelegate {
@@ -133,7 +118,10 @@ extension SearchMainViewController: UISearchBarDelegate {
         guard searchParams.searchText != text else { return }
         searchParams.searchText = text
         resetFetchState()
-        fetchPhotoData()
+//        fetchPhotoData()
+        if let parameters = searchParams.toParameters {
+            fetchPhotoData(api: UnsplashRequest.search(params: searchParams))
+        }
     }
 }
 
@@ -175,7 +163,10 @@ extension SearchMainViewController: UICollectionViewDelegate, UICollectionViewDa
                 searchParams.color = selectedColor
             }
             resetFetchState()
-            fetchPhotoData()
+//            fetchPhotoData()
+            if let parameters = searchParams.toParameters {
+                fetchPhotoData(api: UnsplashRequest.search(params: searchParams))
+            }
         } else {
             // Photo
             let vc = StatisticMainViewController()
@@ -189,7 +180,9 @@ extension SearchMainViewController: UICollectionViewDelegate, UICollectionViewDa
             if indexPath.item == photoData.count - 5 {
                 searchParams.page += 1
                 if searchParams.page <= totalPage {
-                    fetchPhotoData()
+                    if let parameters = searchParams.toParameters {
+                        fetchPhotoData(api: UnsplashRequest.search(params: searchParams))
+                    }
                 }
             }
         }

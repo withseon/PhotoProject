@@ -8,11 +8,7 @@
 import UIKit
 
 final class StatisticMainViewController: BaseViewController {
-    private struct StatisticParams: Encodable {
-        let client_id = APIKEY.ACCESS_KEY
-    }
     private let mainView = StatisticMainView()
-    private let statisticParams = StatisticParams()
     var photo: Photo?
     
     override func loadView() {
@@ -22,7 +18,7 @@ final class StatisticMainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let photo else { return }
-        fetchPhotoStatisticData(imageID: photo.id)
+        fetchPhotoStatisticData(api: .statistic(id: photo.id))
     }
     
     override func configureNavigation() {
@@ -31,11 +27,11 @@ final class StatisticMainViewController: BaseViewController {
 }
 
 extension StatisticMainViewController {
-    private func fetchPhotoStatisticData(imageID: String) {
-        let url = APIURL.STATISTIC_URL + "\(imageID)/statistics"
-        let parameters = statisticParams.toParameters
-        
-        NetworkManager.networkRequest(url: url, parameters: parameters, type: StatisticsPhoto.self) { [weak self] result in
+    private func fetchPhotoStatisticData(api: UnsplashRequest) {
+        NetworkManager.networkRequest(url: api.endPoint,
+                                      method: api.method,
+                                      headers: api.header,
+                                      type: StatisticsPhoto.self) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let success):

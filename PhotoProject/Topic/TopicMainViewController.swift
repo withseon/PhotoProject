@@ -8,13 +8,8 @@
 import UIKit
 
 final class TopicMainViewController: BaseViewController {
-    private struct TopicParams: Encodable {
-        let client_id = APIKEY.ACCESS_KEY
-        var query = ""
-    }
-    
     private let mainView = TopicMainView()
-    // TODO: topicData 타입 변경
+    private let randomTopics = Array(Topic.allCases.shuffled()[...2])
     private var topicData: [[Photo]] = [[],[],[]]
     
     override func loadView() {
@@ -23,9 +18,7 @@ final class TopicMainViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        mainView.randomTopics.enumerated().forEach { index, topic in
-            fetchTopicData(query: topic.rawValue, index: index)
-        }
+        fetchAllTopicData()
     }
     
     override func viewIsAppearing(_ animated: Bool) {
@@ -51,24 +44,40 @@ final class TopicMainViewController: BaseViewController {
 }
 
 extension TopicMainViewController {
-    private func fetchTopicData(query: String, index: Int) {
-        let url = APIURL.SEARCH_URL
-        let topicParams = TopicParams(query: query)
-        let parameters = topicParams.toParameters
+    private func fetchAllTopicData() {
+        let group = DispatchGroup()
+        randomTopics.enumerated().forEach { index, topic in
+            group.enter()
+            fetchTopicData(api: UnsplashRequest.topic(id: topic.rawValue), index: index, group: group)
+        }
         
-        NetworkManager.networkRequest(url: url, parameters: parameters, type: SearchPhoto.self) { [weak self] result in
+        group.notify(queue: .main) { [weak self] in
             guard let self else { return }
-            switch result {
-            case .success(let success):
-                topicData[index] = success.results
-                mainView.topicCollectionViews.forEach { collectionView in
-                    collectionView.reloadData()
-                }
-            case .failure(let failure):
-                print(failure)
+            mainView.configureContent(topics: randomTopics)
+            mainView.topicCollectionViews.forEach { collectionView in
+                collectionView.reloadData()
             }
         }
     }
+    
+    private func fetchTopicData(api: UnsplashRequest, index: Int, group: DispatchGroup) {
+        NetworkManager.networkRequest(url: api.endPoint,
+                                      method: api.method,
+                                      parameters: api.parameters,
+                                      headers: api.header,
+                                      type: [Photo].self) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let value):
+                topicData[index] = value
+                group.leave()
+            case .failure(let error):
+                print(error)
+                group.leave()
+            }
+        }
+    }
+
 }
 
 extension TopicMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {

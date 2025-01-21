@@ -16,14 +16,14 @@ import Alamofire
  500, 503    Something went wrong on our end
  */
 enum NetworkManager {
-    static func networkRequest<T: Decodable>(url: String, parameters: Parameters? = nil,
-                                             headerDict: [String: String]? = nil, type: T.Type,
+    static func networkRequest<T: Decodable>(url: URLConvertible,
+                                             method: HTTPMethod,
+                                             parameters: Parameters? = nil,
+                                             encoding: ParameterEncoding = URLEncoding(destination: .queryString),
+                                             headers: HTTPHeaders? = nil,
+                                             type: T.Type,
                                              completion: @escaping (Result<T, Error>) -> Void) {
-        var headers: HTTPHeaders?
-        if let headerDict {
-            headers = HTTPHeaders(headerDict)
-        }
-        AF.request(url, method: .get, parameters: parameters, headers: headers)
+        AF.request(url, method: method, parameters: parameters, encoding: encoding,  headers: headers)
             .validate(statusCode: [200])
             .responseDecodable(of: T.self) { response in
                 switch response.result {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Topic: String, CaseIterable, CustomStringConvertible {
+enum Topic: String, CaseIterable, Encodable {
     case architectureInterior = "architecture-interior"
     case goldenHour = "golden-hour"
     case wallpapers

@@ -9,39 +9,27 @@ import UIKit
 import SnapKit
 
 final class TopicMainView: BaseView {
-    let randomTopics = Topic.allCases.shuffled()[...2]
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    // TODO: 1. label, collectionView 타입 변경
-    // TODO: 2. CollectionView - Section으로 구성
-    private lazy var topicLabels: [UILabel] = {
-        randomTopics.enumerated().map { index, topic in
-            let label = UILabel()
-            label.text = topic.description
-            label.font = .systemFont(ofSize: 20, weight: .bold)
-            label.tag = index
-            return label
-        }
-    }()
-    lazy var topicCollectionViews: [UICollectionView] = {
-        randomTopics.enumerated().map { index, _ in
-            let collectionView = UICollectionView(frame: .zero, collectionViewLayout: setTopicCollectionViewFlowLayout())
-            collectionView.tag = index
-            return collectionView
-        }
-    }()
+    private let firstTopicTitleLabel = UILabel()
+    private let secondTopicTitleLabel = UILabel()
+    private let thirdTopicTitleLabel = UILabel()
+    private lazy var firstTopicCollectionView = UICollectionView(frame: .zero, collectionViewLayout: setTopicCollectionViewFlowLayout())
+    private lazy var secondTopicCollectionView = UICollectionView(frame: .zero, collectionViewLayout: setTopicCollectionViewFlowLayout())
+    private lazy var thirdTopicCollectionView = UICollectionView(frame: .zero, collectionViewLayout: setTopicCollectionViewFlowLayout())
+    var topicCollectionViews = [UICollectionView]()
     
     override func configureHierarchy() {
         addSubview(scrollView)
-        topicLabels.forEach { label in
-            scrollView.addSubview(label)
-        }
-        topicCollectionViews.forEach { collectionView in
-            scrollView.addSubview(collectionView)
-        }
+        scrollView.addSubview(firstTopicTitleLabel)
+        scrollView.addSubview(secondTopicTitleLabel)
+        scrollView.addSubview(thirdTopicTitleLabel)
+        scrollView.addSubview(firstTopicCollectionView)
+        scrollView.addSubview(secondTopicCollectionView)
+        scrollView.addSubview(thirdTopicCollectionView)
     }
     
     override func configureLayout() {
@@ -49,36 +37,51 @@ final class TopicMainView: BaseView {
             make.top.horizontalEdges.equalTo(safeAreaLayoutGuide)
             make.bottom.equalToSuperview()
         }
-        topicLabels[0].snp.makeConstraints { make in
+        firstTopicTitleLabel.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview().inset(20)
         }
-        topicCollectionViews[0].snp.makeConstraints { make in
-            make.top.equalTo(topicLabels[0].snp.bottom)
+        firstTopicCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(firstTopicTitleLabel.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(250)
         }
-        topicLabels[1].snp.makeConstraints { make in
-            make.top.equalTo(topicCollectionViews[0].snp.bottom).offset(12)
+        secondTopicTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(firstTopicCollectionView.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
-        topicCollectionViews[1].snp.makeConstraints { make in
-            make.top.equalTo(topicLabels[1].snp.bottom)
+        secondTopicCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(secondTopicTitleLabel.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(250)
         }
-        
-        topicLabels[2].snp.makeConstraints { make in
-            make.top.equalTo(topicCollectionViews[1].snp.bottom).offset(12)
+        thirdTopicTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(secondTopicCollectionView.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
-        topicCollectionViews[2].snp.makeConstraints { make in
-            make.top.equalTo(topicLabels[2].snp.bottom)
+        thirdTopicCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(thirdTopicTitleLabel.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(250)
             make.bottom.equalToSuperview().inset(20)
+        }
+    }
+    
+    override func configureView() {
+        let topicLabels = [firstTopicTitleLabel,
+                           secondTopicTitleLabel,
+                           thirdTopicTitleLabel]
+        topicLabels.forEach { label in
+            label.font = .systemFont(ofSize: 20, weight: .bold)
+        }
+        
+        topicCollectionViews = [firstTopicCollectionView,
+                                    secondTopicCollectionView,
+                                    thirdTopicCollectionView]
+        topicCollectionViews.enumerated().forEach { index, collectionView in
+            collectionView.tag = index
         }
     }
 }
@@ -93,5 +96,15 @@ extension TopicMainView {
         layout.sectionInset = UIEdgeInsets(top: 0, left: horizontalSpacing, bottom: 0, right: horizontalSpacing)
         layout.scrollDirection = .horizontal
         return layout
+    }
+}
+
+extension TopicMainView {
+    func configureContent(topics: [Topic]) {
+        let topicLabels = [firstTopicTitleLabel, secondTopicTitleLabel, thirdTopicTitleLabel]
+        topicLabels.enumerated().forEach { index, label in
+            label.text = topics[index].description
+            
+        }
     }
 }
