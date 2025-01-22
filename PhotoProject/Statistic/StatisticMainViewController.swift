@@ -14,15 +14,11 @@ final class StatisticMainViewController: BaseViewController {
     override func loadView() {
         view = mainView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let photo else { return }
         fetchPhotoStatisticData(api: .statistic(id: photo.id))
-    }
-    
-    override func configureNavigation() {
-        navigationController?.navigationBar.prefersLargeTitles = false
     }
 }
 

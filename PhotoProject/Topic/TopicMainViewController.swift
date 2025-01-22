@@ -9,8 +9,9 @@ import UIKit
 
 final class TopicMainViewController: BaseViewController {
     private let mainView = TopicMainView()
-    private let randomTopics = Array(Topic.allCases.shuffled()[...2])
+    private var randomTopics = Topic.allCases.shuffled().prefix(3).map { $0 }
     private var topicData: [[Photo]] = [[],[],[]]
+    private var refreshTime: Date?
     
     override func loadView() {
         view = mainView
@@ -18,12 +19,18 @@ final class TopicMainViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureScrollView()
         fetchAllTopicData()
     }
     
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     override func configureNavigation() {
@@ -40,7 +47,27 @@ final class TopicMainViewController: BaseViewController {
             collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.identifier)
         }
     }
+}
 
+extension TopicMainViewController {
+    private func configureScrollView() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshRandomTopic), for: .valueChanged)
+        mainView.scrollView.refreshControl = refreshControl
+    }
+    
+    @objc
+    private func refreshRandomTopic() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            if refreshTime?.timeIntervalSinceNow ?? -60 <= -60 {
+                refreshTime = Date.now
+                randomTopics = Topic.allCases.shuffled().prefix(3).map { $0 }
+                fetchAllTopicData()
+            }
+            mainView.scrollView.refreshControl?.endRefreshing()
+        }
+    }
 }
 
 extension TopicMainViewController {
