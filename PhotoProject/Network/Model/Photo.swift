@@ -7,11 +7,6 @@
 
 import Foundation
 
-// MARK: - Topic Data
-struct TopicPhoto: Decodable {
-    let results: [Photo]
-}
-
 // MARK: - Search Data
 struct SearchPhoto: Decodable {
     let total: Int

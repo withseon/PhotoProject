@@ -44,6 +44,18 @@ final class StatisticMainView: BaseView {
             make.top.equalToSuperview().inset(12)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
+        photoImageView.snp.makeConstraints { make in
+            make.top.equalTo(profileView.snp.bottom).offset(12)
+            make.width.equalToSuperview()
+            make.height.equalTo(photoImageView.snp.width)
+        }
+        infoView.snp.makeConstraints { make in
+            make.top.equalTo(photoImageView.snp.bottom).offset(20)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.height.equalTo(100)
+            make.bottom.equalToSuperview().inset(40)
+        }
+
     }
 }
 
@@ -52,16 +64,11 @@ extension StatisticMainView {
         profileView.configureContent(user: photo.user, createAt: photo.createdAt)
         photoImageView.setKFImage(strURL: photo.imageURLs.raw)
         infoView.configureContent(width: photo.width, height: photo.height, views: statistics.views.total, downLoad: statistics.downloads.total)
-        photoImageView.snp.makeConstraints { make in
+        
+        photoImageView.snp.remakeConstraints { make in
             make.top.equalTo(profileView.snp.bottom).offset(12)
             make.width.equalToSuperview()
             make.height.equalTo(photoImageView.snp.width).multipliedBy(Double(photo.height) / Double(photo.width))
-        }
-        infoView.snp.makeConstraints { make in
-            make.top.equalTo(photoImageView.snp.bottom).offset(20)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(100)
-            make.bottom.equalToSuperview().inset(40)
         }
     }
 }

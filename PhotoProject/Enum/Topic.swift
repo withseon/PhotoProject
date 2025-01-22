@@ -23,7 +23,7 @@ enum Topic: String, CaseIterable, Encodable {
     case fashionBeauty = "fashion-beauty"
     case people
     case businessWork = "business-work"
-    case foodDrink = "food"
+    case foodDrink = "food-drink"
     
     var description: String {
         switch self {
