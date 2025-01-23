@@ -24,17 +24,14 @@ final class StatisticMainViewController: BaseViewController {
 
 extension StatisticMainViewController {
     private func fetchPhotoStatisticData(api: UnsplashRequest) {
-        NetworkManager.networkRequest(url: api.endPoint,
-                                      method: api.method,
-                                      headers: api.header,
-                                      type: StatisticsPhoto.self) { [weak self] result in
+        UnsplashManager.executeFetch(api: api, type: StatisticsPhoto.self) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let success):
                 guard let photo else { return }
                 mainView.configureContent(photo: photo, statistics: success)
             case .failure(let failure):
-                print(failure)
+                showAlert(title: failure.rawValue, withCancel: true)
             }
         }
     }

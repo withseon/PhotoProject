@@ -22,9 +22,9 @@ enum NetworkManager {
                                              encoding: ParameterEncoding = URLEncoding(destination: .queryString),
                                              headers: HTTPHeaders? = nil,
                                              type: T.Type,
-                                             completion: @escaping (Result<T, Error>) -> Void) {
+                                             completion: @escaping (Result<T, AFError>) -> Void) {
         AF.request(url, method: method, parameters: parameters, encoding: encoding,  headers: headers)
-            .validate(statusCode: [200])
+            .validate(statusCode: 200..<300)
             .responseDecodable(of: T.self) { response in
                 switch response.result {
                 case .success(let value):

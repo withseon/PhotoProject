@@ -76,11 +76,7 @@ extension SearchMainViewController {
     }
     
     private func fetchPhotoData(api: UnsplashRequest) {
-        NetworkManager.networkRequest(url: api.endPoint,
-                                      method: api.method,
-                                      parameters: api.parameters,
-                                      headers: api.header,
-                                      type: SearchPhoto.self) { [weak self] result in
+        UnsplashManager.executeFetch(api: api, type: SearchPhoto.self) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let success):
@@ -101,11 +97,10 @@ extension SearchMainViewController {
                     mainView.photoCollectionView.reloadData()
                 }
             case .failure(let failure):
-                print(failure)
+                showAlert(title: failure.rawValue, withCancel: true)
             }
         }
     }
-
 }
 
 extension SearchMainViewController: UISearchBarDelegate {

@@ -59,4 +59,3 @@ struct SearchParams: Encodable {
         case color
     }
 }
-

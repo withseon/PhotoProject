@@ -34,8 +34,8 @@ final class TopicMainView: BaseView {
     
     override func configureLayout() {
         scrollView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalTo(safeAreaLayoutGuide)
-            make.bottom.equalToSuperview()
+            make.horizontalEdges.equalTo(safeAreaLayoutGuide)
+            make.verticalEdges.equalToSuperview()
         }
         firstTopicTitleLabel.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview().inset(20)

@@ -88,18 +88,14 @@ extension TopicMainViewController {
     }
     
     private func fetchTopicData(api: UnsplashRequest, index: Int, group: DispatchGroup) {
-        NetworkManager.networkRequest(url: api.endPoint,
-                                      method: api.method,
-                                      parameters: api.parameters,
-                                      headers: api.header,
-                                      type: [Photo].self) { [weak self] result in
+        UnsplashManager.executeFetch(api: api, type: [Photo].self) { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success(let value):
-                topicData[index] = value
+            case .success(let success):
+                topicData[index] = success
                 group.leave()
-            case .failure(let error):
-                print(error)
+            case .failure(let failure):
+                showAlert(title: failure.rawValue, withCancel: true)
                 group.leave()
             }
         }
@@ -124,3 +120,5 @@ extension TopicMainViewController: UICollectionViewDelegate, UICollectionViewDat
         navigationController?.pushViewController(vc, animated: true)
     }
 }
+
+
