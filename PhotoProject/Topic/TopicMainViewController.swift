@@ -95,7 +95,7 @@ extension TopicMainViewController {
                 topicData[index] = success
                 group.leave()
             case .failure(let failure):
-                showAlert(title: failure.rawValue, withCancel: true)
+                showAlert(withCancel: true, title: failure.rawValue)
                 group.leave()
             }
         }

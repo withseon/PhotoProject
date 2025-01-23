@@ -8,10 +8,9 @@
 import UIKit
 
 extension UIViewController {
-    func showAlert(title: String? = nil, message: String? = nil,
+    func showAlert(withCancel: Bool, title: String? = nil, message: String? = nil,
                    style: UIAlertController.Style = .alert,
-                   actionTitle: String? = nil, actionHandler: (() -> Void)? = nil,
-                   withCancel: Bool) {
+                   actionTitle: String? = nil, actionHandler: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         if withCancel {
             let cancelAction = UIAlertAction(title: "취소", style: .cancel)
@@ -24,5 +23,12 @@ extension UIViewController {
             alert.addAction(action)
         }
         self.present(alert, animated: true)
+    }
+    
+    func changeRootViewController(vc: UIViewController) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+
     }
 }
