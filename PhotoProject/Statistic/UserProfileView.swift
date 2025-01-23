@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ProfileView: BaseView {
+final class UserProfileView: BaseView {
     private let profileImageView = UIImageView()
     private let labelStackView: UIStackView = {
         let stackView = UIStackView()
@@ -52,7 +52,7 @@ final class ProfileView: BaseView {
     }
 }
 
-extension ProfileView {
+extension UserProfileView {
     func configureContent(user: User, createAt: String) {
         profileImageView.setKFImage(strURL: user.profileImage.medium)
         userNameLabel.text = user.name
