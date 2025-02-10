@@ -53,11 +53,9 @@ final class UserProfileView: BaseView {
 }
 
 extension UserProfileView {
-    func configureContent(user: User, createAt: String) {
-        profileImageView.setKFImage(strURL: user.profileImage.medium)
+    func configureContent(user: UserInfo, createAt: String) {
+        profileImageView.setKFImage(strURL: user.profileImage)
         userNameLabel.text = user.name
         createDateLabel.text = createAt
-            .toDate("yyyy-MM-dd'T'HH:mm:ssZ")?
-            .toFormattedString("yyyy년 M월 d일 게시됨")
     }
 }

@@ -115,8 +115,8 @@ extension TopicMainViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = StatisticMainViewController()
-        vc.photo = topicData[collectionView.tag][indexPath.item]
+        let vc = StatisticMainViewController(photo: topicData[collectionView.tag][indexPath.item])
+//        vc.photo = topicData[collectionView.tag][indexPath.item]
         navigationController?.pushViewController(vc, animated: true)
     }
 }

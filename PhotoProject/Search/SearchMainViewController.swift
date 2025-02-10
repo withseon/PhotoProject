@@ -97,7 +97,7 @@ extension SearchMainViewController {
                     mainView.photoCollectionView.reloadData()
                 }
             case .failure(let failure):
-                showAlert(title: failure.rawValue, withCancel: true)
+                showAlert(withCancel: true, title: failure.rawValue)
             }
         }
     }
@@ -107,7 +107,7 @@ extension SearchMainViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text,
               text.trimmingCharacters(in: .whitespaces).count >= 2  else {
-            showAlert(title: "입력 오류", message: "두 글자 이상 검색해주세요.", actionTitle: "확인", withCancel: false)
+            showAlert(withCancel: false, title: "입력 오류", message: "두 글자 이상 검색해주세요.", actionTitle: "확인")
             return
         }
         guard searchParams.searchText != text else { return }
@@ -158,8 +158,8 @@ extension SearchMainViewController: UICollectionViewDelegate, UICollectionViewDa
             fetchPhotoData(api: UnsplashRequest.search(params: searchParams))
         } else {
             // Photo
-            let vc = StatisticMainViewController()
-            vc.photo = photoData[indexPath.item]
+            let vc = StatisticMainViewController(photo: photoData[indexPath.item])
+//            vc.photo = photoData[indexPath.item]
             navigationController?.pushViewController(vc, animated: true)
         }
     }

@@ -9,7 +9,13 @@ import UIKit
 
 final class StatisticMainViewController: BaseViewController {
     private let mainView = StatisticMainView()
-    var photo: Photo?
+    private let viewModel: StatisticMainViewModel
+    
+    init(photo: Photo) {
+        viewModel = StatisticMainViewModel(photo: photo)
+        viewModel.input.photoData.value = photo
+        super.init()
+    }
     
     override func loadView() {
         view = mainView
@@ -17,22 +23,17 @@ final class StatisticMainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let photo else { return }
-        fetchPhotoStatisticData(api: .statistic(id: photo.id))
+        transform()
     }
-}
-
-extension StatisticMainViewController {
-    private func fetchPhotoStatisticData(api: UnsplashRequest) {
-        UnsplashManager.executeFetch(api: api, type: StatisticsPhoto.self) { [weak self] result in
+    
+    private func transform() {
+        viewModel.output.updateContent.lazyBind { [weak self] content in
+            guard let self, let content else { return }
+            mainView.configureContent(photo: content.photo, statistics: content.statistics)
+        }
+        viewModel.output.showAlert.lazyBind { [weak self] message in
             guard let self else { return }
-            switch result {
-            case .success(let success):
-                guard let photo else { return }
-                mainView.configureContent(photo: photo, statistics: success)
-            case .failure(let failure):
-                showAlert(title: failure.rawValue, withCancel: true)
-            }
+            showAlert(withCancel: true, message: message)
         }
     }
 }

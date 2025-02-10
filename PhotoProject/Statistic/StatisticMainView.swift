@@ -55,20 +55,22 @@ final class StatisticMainView: BaseView {
             make.height.equalTo(100)
             make.bottom.equalToSuperview().inset(40)
         }
-
     }
 }
 
 extension StatisticMainView {
-    func configureContent(photo: Photo, statistics: StatisticsPhoto) {
-        userProfileView.configureContent(user: photo.user, createAt: photo.createdAt)
-        photoImageView.setKFImage(strURL: photo.imageURLs.raw)
-        infoView.configureContent(width: photo.width, height: photo.height, views: statistics.views.total, downLoad: statistics.downloads.total)
+    func configureContent(photo: PhotoInfo, statistics: StatisticsInfo) {
+        userProfileView.configureContent(user: photo.userInfo, createAt: photo.createdAt)
+        photoImageView.setKFImage(strURL: photo.rawImageURL)
+        infoView.configureContent(size: photo.size,
+                                  views: statistics.views.total,
+                                  downLoad: statistics.downloads.total)
         
         photoImageView.snp.remakeConstraints { make in
             make.top.equalTo(userProfileView.snp.bottom).offset(12)
             make.width.equalToSuperview()
-            make.height.equalTo(photoImageView.snp.width).multipliedBy(Double(photo.height) / Double(photo.width))
+            make.height.equalTo(photoImageView.snp.width).multipliedBy(photo.heightToWidthRatio)
         }
     }
+
 }

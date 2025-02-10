@@ -78,9 +78,9 @@ extension InfoView {
         return label
     }
     
-    func configureContent(width: Int, height: Int, views: Int, downLoad: Int) {
-        sizeValueLabel.text = "\(width) x \(height)"
-        viewsValueLabel.text = views.formatted()
-        downloadValueLabel.text = downLoad.formatted()
+    func configureContent(size: String, views: String, downLoad: String) {
+        sizeValueLabel.text = size
+        viewsValueLabel.text = views
+        downloadValueLabel.text = downLoad
     }
 }

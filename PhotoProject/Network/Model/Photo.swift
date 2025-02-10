@@ -58,3 +58,35 @@ struct User: Decodable {
 struct ProfileImage: Decodable {
     let medium: String
 }
+
+// MARK: - 
+extension Photo {
+    var photoInfo: PhotoInfo {
+        let createdDate = self.createdAt.toDate("yyyy-MM-dd'T'HH:mm:ssZ")
+        let createdAt = createdDate?.toFormattedString("yyyy년 M월 d일 게시됨") ?? ""
+        let userInfo = UserInfo(name: self.user.name,
+                                profileImage: self.user.profileImage.medium)
+        return PhotoInfo(id: self.id,
+                         createdAt: createdAt,
+                         heightToWidthRatio: Double(height) / Double(width),
+                         size: "\(self.width) X \(self.height)",
+                         rawImageURL: self.imageURLs.raw,
+                         likes: self.likes,
+                         userInfo: userInfo)
+    }
+}
+
+struct PhotoInfo {
+    let id: String
+    let createdAt: String
+    let heightToWidthRatio: Double
+    let size: String
+    let rawImageURL: String
+    let likes: Int
+    let userInfo: UserInfo
+}
+
+struct UserInfo {
+    let name: String
+    let profileImage: String
+}
