@@ -8,6 +8,10 @@
 import UIKit
 
 class BaseViewController: UIViewController {
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -18,4 +22,9 @@ class BaseViewController: UIViewController {
     func configureView() { }
     func configureNavigation() { }
     func configureCollectionView() { }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
